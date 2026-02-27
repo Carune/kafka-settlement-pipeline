@@ -1,0 +1,12 @@
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        mavenCentral()
+    }
+}
+
+rootProject.name = 'kafka-settlement-pipeline'
+
+include 'apps:settlement-batch'
+include 'apps:outbox-publisher'
+include 'apps:adjustment-consumer'

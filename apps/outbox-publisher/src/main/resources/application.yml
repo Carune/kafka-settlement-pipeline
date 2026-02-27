@@ -1,0 +1,19 @@
+server:
+  port: 8082
+
+spring:
+  application:
+    name: outbox-publisher
+  datasource:
+    url: jdbc:postgresql://localhost:5432/settlement
+    username: settlement
+    password: settlement
+  jpa:
+    hibernate:
+      ddl-auto: none
+  kafka:
+    bootstrap-servers: localhost:19092
+
+app:
+  outbox:
+    poll-interval-ms: 5000
