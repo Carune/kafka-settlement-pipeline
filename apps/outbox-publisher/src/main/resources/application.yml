@@ -13,7 +13,14 @@ spring:
       ddl-auto: none
   kafka:
     bootstrap-servers: localhost:19092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+      acks: all
 
 app:
   outbox:
     poll-interval-ms: 5000
+    batch-size: 100
+    max-retry-count: 5
+    send-timeout-ms: 3000
