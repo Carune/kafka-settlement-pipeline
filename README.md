@@ -27,11 +27,13 @@
 
 기능 단위 브랜치 전략은 `docs/GIT_WORKFLOW.md`에 정리되어 있습니다.
 
-## 현재 구현 범위 (1차)
+## 현재 구현 범위 (2차)
 
 - `settlement-batch`가 `businessDate` 기준으로 거래 데이터를 가맹점 단위 집계
 - 정산 원장(`settlement_ledger`) 저장
 - 차액이 있는 건만 아웃박스(`outbox_event`) 생성
+- `outbox-publisher`가 `대기` 상태 아웃박스 이벤트를 조회해 Kafka 발행
+- 발행 성공 시 `발행완료`, 실패 시 재시도 카운트 증가 및 한도 초과 시 `발행실패` 처리
 - 실행 API: `POST /batch/settlement?businessDate=YYYY-MM-DD`
 
 ## 로컬 테스트 순서
