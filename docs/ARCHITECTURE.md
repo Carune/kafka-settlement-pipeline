@@ -6,6 +6,7 @@
 2. `outbox-publisher`가 미발행 아웃박스 이벤트를 조회해 Kafka 토픽으로 발행합니다.
 3. `adjustment-consumer`가 `settlement.adjustment.v1`을 구독해 보정 로직을 수행합니다.
 4. 보정 실패 건은 재시도 토픽으로 이동하고, 재시도 한도를 넘기면 DLQ로 이동합니다.
+5. Consumer는 `processed_event`를 사용해 동일 `eventId` 중복 처리를 건너뜁니다.
 
 ## 초기 범위
 

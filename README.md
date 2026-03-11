@@ -34,6 +34,8 @@
 - 차액이 있는 건만 아웃박스(`outbox_event`) 생성
 - `outbox-publisher`가 `대기` 상태 아웃박스 이벤트를 조회해 Kafka 발행
 - 발행 성공 시 `발행완료`, 실패 시 재시도 카운트 증가 및 한도 초과 시 `발행실패` 처리
+- `adjustment-consumer`가 보정 이벤트를 소비해 처리 수행
+- 보정 처리 실패 시 retry 토픽으로 라우팅하고, 최대 재시도 횟수 초과 시 DLQ로 라우팅
 - 실행 API: `POST /batch/settlement?businessDate=YYYY-MM-DD`
 
 ## 로컬 테스트 순서
@@ -42,3 +44,23 @@
 2. IDE에서 `settlement-batch` 애플리케이션 실행
 3. `POST http://localhost:8081/batch/settlement?businessDate=<어제 날짜>`
 4. PostgreSQL에서 `settlement_ledger`, `outbox_event` 테이블 확인
+
+## 포트폴리오 단계 로드맵
+
+- Step 1: Consumer 멱등성(`eventId` 중복 처리 방지)
+- Step 2: Retry 백오프/지연 재처리
+- Step 3: DLQ Replay 배치 + 운영 API
+- Step 4: 관측성(Metrics/Tracing/Structured Logging)
+- Step 5: 이벤트 스키마 버저닝(Avro/Protobuf 등)
+
+## Step 1 변경 사항 (현재)
+
+- `processed_event` 테이블 추가
+- `adjustment-consumer`에서 `eventId` 기준 중복 메시지 스킵
+- 정상 처리 완료 시 `processed_event`에 처리 이력 저장
+
+### Step 1 검증 포인트
+
+1. 동일 `eventId` 메시지를 다시 넣어도 비즈니스 로직이 재실행되지 않는지 확인
+2. `processed_event`에 eventId가 1건만 저장되는지 확인
+3. 기존 retry/DLQ 흐름이 깨지지 않는지 확인

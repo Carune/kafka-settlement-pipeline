@@ -39,3 +39,14 @@ create table if not exists outbox_event (
 
 create index if not exists idx_outbox_event_status_created_at
     on outbox_event (status, created_at);
+
+create table if not exists processed_event (
+    id bigserial primary key,
+    event_id varchar(64) not null unique,
+    event_key varchar(128),
+    source_topic varchar(128) not null,
+    processed_at timestamp not null default now()
+);
+
+create index if not exists idx_processed_event_processed_at
+    on processed_event (processed_at);
